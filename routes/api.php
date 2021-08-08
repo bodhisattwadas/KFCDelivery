@@ -28,3 +28,5 @@ Route::post('/create.user','AjaxController@_createUser')->name('create.user');
 Route::post('/get.verified.status','AjaxController@_getVerifiedStatus')->name('get.verified.status');
 Route::post('/update.profile','AjaxController@_updateProfile')->name('update.profile');
 
+Route::post('/create.order','AjaxController@_createOrder')->name('create.order');
+

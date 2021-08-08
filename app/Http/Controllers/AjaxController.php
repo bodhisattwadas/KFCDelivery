@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\OrderModel;
 use Illuminate\Support\Facades\Hash;
 
 class AjaxController extends Controller
@@ -120,5 +121,38 @@ class AjaxController extends Controller
         ]);
         
 
+    }
+    public function _createOrder(Request $request){
+        if(!$request->has('order_id') || $request->get('order_id')==''){
+            return json_encode([
+                'status'=>'fail',
+                'message'=>'order id is not specified'
+            ]);
+        }elseif(!$request->has('store_code') || $request->get('store_code')==''){
+            return json_encode([
+                'status'=>'fail',
+                'message'=>'store code is not specified'
+            ]);
+        }elseif(OrderModel::where('order_id',$request->get('order_id'))->get()->count() != 0){
+            return json_encode([
+                'status'=>'fail',
+                'message'=>'order id is already generated'
+            ]);
+        }elseif(OrderModel::where('order_id',$request->get('order_id'))->get()->count() == 0){    
+            $order = new OrderModel([
+                'order_id'=>$request->get('order_id'),
+                'store_code'=>$request->get('store_code')
+            ]);
+            $order->save();
+            return json_encode([
+                'status'=>'success',
+                'message'=>'order generated'
+            ]);
+        }else{
+            return json_encode([
+                'status'=>'fail',
+                'message'=>'some uknown error occurred'
+            ]);
+        }
     }
 }

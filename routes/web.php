@@ -16,9 +16,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/test', function () {
-    return view('admin.index');
-});
+// Route::get('/test', function () {
+//     return view('admin.index');
+// });
 Route::post('show.rider.details','RiderController@showRider')->name('show.rider.details');
 Route::get('store.destroy/{id}','StoreController@destroy')->name('store.destroy');
 
