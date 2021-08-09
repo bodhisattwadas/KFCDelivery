@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\OrderModel;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Response as FacadeResponse;
 
 class AjaxController extends Controller
 {
@@ -33,44 +35,38 @@ class AjaxController extends Controller
         );
     }
     public function _createUser(Request $request){
-        if(is_null($request->get('name'))){
-            return json_encode([
-                'status'=>'fail',
-                'message'=>'name field empty'
-            ]);
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|unique:users',
+            'name' => 'required|string|max:50',
+            'password' => 'required'
+        ]);
+         
+        if($validator->fails()){
+            return response()->json([
+                "status" => 'fail',
+                "message" => $validator->errors(),
+            ], 422);
         }
-        elseif(is_null($request->get('email'))){
-            return json_encode([
-                'status'=>'fail',
-                'message'=>'email field empty'
-            ]);
-        }
-        elseif(is_null($request->get('password'))){
-            return json_encode([
-                'status'=>'fail',
-                'message'=>'password field empty'
-            ]);
-        }
-        elseif(User::where('email',$request->get('email'))->get()->first()){
-            return json_encode([
-                'status'=>'fail',
-                'message'=>'email already taken'
-            ]);
-        }else{
+        try{
             $user = new User([
-                'name' => $request->get('name'),
-                'email' => $request->get('email'),
-                'password' => Hash::make($request->get('password'),),
-                'verified'=>'no',
-                'type'=>'rider'
-            ]);
+                       'name' => $request->get('name'),
+                       'email' => $request->get('email'),
+                       'password' => Hash::make($request->get('password'),),
+                       'verified'=>'no',
+                       'type'=>'rider'
+                    ]);
             $user->save();
-            return json_encode([
+            return response()->json([
                 'status'=>'success',
-                'message'=>'user created successfully'
-            ]);
+                'message'=>'registered successfully',
+            ],200);
         }
-        
+        catch(Exception $e){
+            return response()->json([
+                "status" => "fail",
+                "message" => "Unable to register user"
+            ], 400);
+        }
     }
     public function _getVerifiedStatus(Request $request){
         $status = User::where('email',$request->get('email'))->get()->first()->verified;
@@ -78,13 +74,6 @@ class AjaxController extends Controller
             'status'=>$status
         ]);
     }
-/**
- * 
- * 'phone_number',
-        'aadhar_number',
-        'dl_number',
-        'location',
- */
     public function _updateProfile(Request $request){
         $user = User::find(User::where('email',$request->get('email'))->get()->first()->id);
         if($request->hasFile('aadhar_picture')){
@@ -153,6 +142,36 @@ class AjaxController extends Controller
                 'status'=>'fail',
                 'message'=>'some uknown error occurred'
             ]);
+        }
+    }
+    public function _checkProfileUpdateStatus(Request $request){
+        $validator = Validator::make($request->all(), [
+            'email' => 'required'
+        ]);
+         
+        if($validator->fails()){
+            return response()->json([
+                "status" => 'fail',
+                "message" => $validator->errors(),
+            ], 422);
+        }else{
+            $user = User::find(User::where('email',$request->get('email'))->get()->first()->id);
+            if(
+                !$user->phone_number1 || !$user->phone_number2 ||
+                !$user->aadhar_number || !$user->dl_number ||
+                !$user->location || !$user->aadhar_picture ||
+                !$user->dl_picture
+            ){
+                return response()->json([
+                    "status" => 'fail',
+                    "message" => "Not uploaded details",
+                ], 200);
+            }else{
+                return response()->json([
+                    "status" => 'success',
+                    "message" => "Uploaded details",
+                ], 422);
+            }
         }
     }
 }

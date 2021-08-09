@@ -11,10 +11,19 @@ class CreateOrderDetailsTable extends Migration
      *
      * @return void
      */
+    // 'scheduled_time','order_value','paid','client_order_id',
+    //     'drop_instruction_text','take_drop_off_picture','drop_off_picture_mandatory'
     public function up()
     {
         Schema::create('order_details', function (Blueprint $table) {
             $table->id();
+            $table->datetime('scheduled_time');
+            $table->string('order_value')->nullable();
+            $table->integer('paid')->default(0);
+            $table->string('client_order_id');
+            $table->string('drop_instruction_text')->nullable();
+            $table->integer('take_drop_off_picture')->default(0);
+            $table->integer('drop_off_picture_mandatory')->default(0);
             $table->timestamps();
         });
     }

@@ -21,7 +21,8 @@ class User extends Authenticatable
         'email',
         'password',
 
-        'phone_number',
+        'phone_number1',
+        'phone_number2',
         'aadhar_number',
         'dl_number',
         'location',
