@@ -19,6 +19,7 @@ class CreateProductModelsTable extends Migration
             $table->string('product_weight')->nullable();
             $table->string('product_quantity')->nullable();
             $table->string('product_name')->nullable();
+            $table->string('product_category')->nullable();
             $table->string('product_price')->nullable();
             $table->timestamps();
         });
