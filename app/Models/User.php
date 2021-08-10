@@ -29,7 +29,7 @@ class User extends Authenticatable
         'aadhar_picture',
         'dl_picture',
         'verified',
-        'type'
+        'role'
     ];
 
     /**

@@ -18,8 +18,6 @@
                           <th>Store Code</th>
                           <th>Store Name</th>
                           <th>Location</th>
-                          <th></th>
-                          <th></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -28,16 +26,6 @@
                             <td>{{$element['store_code']}}</td>
                             <td>{{$element['store_name']}}</td>
                             <td>{{$element['store_location']}}</td>
-                            <td>
-                              <a href="" class="btn btn-xs btn-success btn-sm">
-                                <i class="fa fa-edit" aria-hidden="true"></i>
-                              </a>
-                            </td>
-                            <td>
-                                {{Form::open(['method'  => 'DELETE', 'route' => ['store.destroy', $element['id']]])}}
-                                {{Form::button('<i class="fa fa-trash"></i>', array('type' => 'submit', 'class' => 'btn btn-xs btn-danger btn-sm' ,'onclick'=>"return confirm('Are you sure you want to delete this item?');"))}}
-                                {{ Form::close() }}
-                            </td>
                         </tr>
                       @endforeach
                     </tbody>

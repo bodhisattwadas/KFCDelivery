@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Hash;
 
 class CreateUsersTable extends Migration
 {
@@ -28,11 +29,17 @@ class CreateUsersTable extends Migration
             $table->string('aadhar_picture')->nullable();
             $table->string('dl_picture')->nullable();
             $table->string('verified')->nullable()->default('no');
-            $table->string('type');
+
+            $table->string('role');
 
             $table->rememberToken();
             $table->timestamps();
         });
+        DB::table('users')->insert(
+            array(
+                ['name'=>'admin','email'=>'admin@kfc.com','verified'=>'yes','password' => Hash::make('irishhngf'),'role' => 'admin']
+            )
+        );
     }
 
     /**

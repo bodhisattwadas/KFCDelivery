@@ -14,8 +14,20 @@ class RiderController extends Controller
      */
     public function index()
     {
-        $riders = User::where('type','rider')->get();
+        $riders = User::where('role','rider')->get();
         return view('admin.rider',compact('riders'));
+    }
+    public function _verifyRider(Request $request){
+        $user = User::find($request->get('id'));
+        $user->verified = 'yes';
+        $user->save();
+        return redirect()->route('rider.index');
+    }
+    public function _blockRider(Request $request){
+        $user = User::find($request->get('id'));
+        $user->verified = 'no';
+        $user->save();
+        return redirect()->route('rider.index');
     }
 
     /**

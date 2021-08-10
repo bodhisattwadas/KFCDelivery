@@ -21,7 +21,6 @@
                         <th>Email</th>
                         <th>Verified</th>
                         <th></th>
-                        <th></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -34,15 +33,13 @@
                               Ph 2:{{$element['phone_number2']}}
                           </td>
                           <td>{{$element['email']}}</td>
-                          <td>{{$element['verified']}}</td>
+                          <td>{{strtoupper($element['verified'])}}</td>
                           <td>
                             <form method="POST" action="{{route('show.rider.details')}}">
                               @csrf
                               <input type="hidden" name="rider" value="{{$element['id']}}">
-                              <button type="submit" class="btn btn-primary">Details</button>
+                              <button type="submit" class="btn btn-block btn-sm btn-primary">Details</button>
                             </form>
-                          </td>
-                          <td>
                           </td>
                       </tr>
                     @endforeach

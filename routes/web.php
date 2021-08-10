@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\StoreRiderModelController;
+use App\Http\Controllers\RiderController;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +22,10 @@ Route::get('/', function () {
 //     return view('admin.index');
 // });
 Route::post('show.rider.details','RiderController@showRider')->name('show.rider.details');
+Route::post('verify.rider','RiderController@_verifyRider')->name('verify.rider');
+Route::post('block.rider','RiderController@_blockRider')->name('block.rider');
+Route::post('update.rider.store','StoreRiderModelController@store')->name('update.rider.store');
+
 Route::get('store.destroy/{id}','StoreController@destroy')->name('store.destroy');
 
 Route::resource('store','StoreController');

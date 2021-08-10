@@ -3,8 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\MiscModel;
-use App\Models\ProductModel;
+use App\Models\StoreModel;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,7 +14,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-         MiscModel::factory(10)->create();
-         ProductModel::factory(10)->create();
+         //MiscModel::factory(10)->create();
+         //ProductModel::factory(10)->create();
+         StoreModel::factory(10)->create();
     }
 }

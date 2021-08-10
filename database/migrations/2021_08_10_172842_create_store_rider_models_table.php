@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateStoreModelsTable extends Migration
+class CreateStoreRiderModelsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,12 @@ class CreateStoreModelsTable extends Migration
      */
     public function up()
     {
-        Schema::create('store_models', function (Blueprint $table) {
+        Schema::create('store_rider_models', function (Blueprint $table) {
             $table->id();
             $table->string('store_code');
-            $table->string('store_name');
-            $table->string('store_location')->nullable();
+            $table->string('rider_code');
             $table->timestamps();
         });
-        DB::table('store_models')->insert(
-            array(
-                ['store_code'=>'k101','store_name'=>'test location']
-            )
-        );
     }
 
     /**
@@ -34,6 +28,6 @@ class CreateStoreModelsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('store_models');
+        Schema::dropIfExists('store_rider_models');
     }
 }

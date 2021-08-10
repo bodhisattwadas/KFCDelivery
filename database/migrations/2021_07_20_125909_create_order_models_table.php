@@ -15,7 +15,9 @@ class CreateOrderModelsTable extends Migration
     {
         Schema::create('order_models', function (Blueprint $table) {
             $table->id();
-            $table->string('order_id');
+            //$table->string('order_id');
+            
+            $table->string('picup_contact_number');
             $table->string('store_code');
             //$table->integer('order_details');
             //OrderDetails
