@@ -45,7 +45,7 @@ class AjaxController extends Controller
             return response()->json([
                 "status" => 'fail',
                 "message" => $validator->errors(),
-            ], 422);
+            ]);
         }
         try{
             $user = new User([
@@ -59,13 +59,13 @@ class AjaxController extends Controller
             return response()->json([
                 'status'=>'success',
                 'message'=>'registered successfully',
-            ],200);
+            ]);
         }
         catch(Exception $e){
             return response()->json([
                 "status" => "fail",
                 "message" => "Unable to register user"
-            ], 400);
+            ]);
         }
     }
     public function _getVerifiedStatus(Request $request){
@@ -75,6 +75,25 @@ class AjaxController extends Controller
         ]);
     }
     public function _updateProfile(Request $request){
+        $validator = Validator::make($request->all(), [
+            'email' => 'required',
+            'aadhar_picture' => 'required',
+            'dl_picture' => 'required',
+            'phone_number1' => 'required',
+            'phone_number2' => 'required',
+            'aadhar_number' => 'required',
+            'dl_number' => 'required',
+            'location' => 'required',
+
+        ]);
+         
+        if($validator->fails()){
+            return response()->json([
+                "status" => 'fail',
+                "message" => $validator->errors(),
+            ]);
+        }
+
         $user = User::find(User::where('email',$request->get('email'))->get()->first()->id);
         if($request->hasFile('aadhar_picture')){
             $file = $request->file('aadhar_picture');
@@ -106,7 +125,8 @@ class AjaxController extends Controller
         
         $user->save();
         return json_encode([
-            'status'=>'success'
+            'status'=>'success',
+            'message'=>"Profile updated successfully"
         ]);
         
 
@@ -146,14 +166,14 @@ class AjaxController extends Controller
     }
     public function _checkProfileUpdateStatus(Request $request){
         $validator = Validator::make($request->all(), [
-            'email' => 'required'
+            'email' => 'required|email'
         ]);
          
         if($validator->fails()){
             return response()->json([
                 "status" => 'fail',
                 "message" => $validator->errors(),
-            ], 422);
+            ]);
         }else{
             $user = User::find(User::where('email',$request->get('email'))->get()->first()->id);
             if(
@@ -165,12 +185,12 @@ class AjaxController extends Controller
                 return response()->json([
                     "status" => 'fail',
                     "message" => "Not uploaded details",
-                ], 200);
+                ]);
             }else{
                 return response()->json([
                     "status" => 'success',
                     "message" => "Uploaded details",
-                ], 422);
+                ]);
             }
         }
     }
