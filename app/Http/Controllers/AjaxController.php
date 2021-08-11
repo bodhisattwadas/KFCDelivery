@@ -121,7 +121,7 @@ class AjaxController extends Controller
             return response()->json([
                 "status" => 'fail',
                 "message" => 'fail',
-                "error" => $validator->errors(),
+                //"error" => $validator->errors(),
             ]);
         }
 
@@ -158,7 +158,7 @@ class AjaxController extends Controller
         return json_encode([
             'status'=>'success',
             'message'=>"Profile updated successfully",
-            'erroor'=>[],
+            //'erroor'=>[],
         ]);
         
 
