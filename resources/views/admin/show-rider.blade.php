@@ -31,14 +31,15 @@ $stores = StoreModel::all()->toArray();
                             <p>Rider Location : {{$details['location']}}</p>
                             <p>Is Verified : {{$details['verified']}}</p>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             @if($details['aadhar_picture'])
                             <div class="card">
                                 <div class="card-header">
                                     AAdhar Card
                                 </div>
                                 <div class="card-body">
-                                    <img src="{{URL::to('/')}}/storage/app/{{$details['aadhar_picture']}}" class="img-rounded" width="200" >
+                                    <img src="{{URL::to('/')}}/storage/app/{{$details['aadhar_picture']}}"
+                                     class="img-rounded" width="100%" >
                                 </div>
                             </div>
                             @endif
@@ -50,7 +51,8 @@ $stores = StoreModel::all()->toArray();
                                     Driving License Card
                                 </div>
                                 <div class="card-body">
-                                    <img src="{{URL::to('/')}}/storage/app/{{$details['dl_picture']}}" class="img-rounded" width="200" >
+                                    <img src="{{URL::to('/')}}/storage/app/{{$details['dl_picture']}}"
+                                     class="img-rounded" width="100%" >
                                 </div>
                             </div>
                             @endif

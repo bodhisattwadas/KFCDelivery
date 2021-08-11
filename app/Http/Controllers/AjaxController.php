@@ -69,6 +69,16 @@ class AjaxController extends Controller
         }
     }
     public function _getVerifiedStatus(Request $request){
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users',
+        ]);
+         
+        if($validator->fails()){
+            return response()->json([
+                "status" => 'fail',
+                "message" => $validator->errors(),
+            ]);
+        }
         $status = User::where('email',$request->get('email'))->get()->first()->verified;
         return json_encode([
             'status'=>$status
@@ -76,7 +86,7 @@ class AjaxController extends Controller
     }
     public function _updateProfile(Request $request){
         $validator = Validator::make($request->all(), [
-            'email' => 'required',
+            'email' => 'required|email|exists:users',
             'aadhar_picture' => 'required',
             'dl_picture' => 'required',
             'phone_number1' => 'required',

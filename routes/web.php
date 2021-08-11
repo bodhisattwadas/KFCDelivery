@@ -18,18 +18,15 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-// Route::get('/test', function () {
-//     return view('admin.index');
-// });
 Route::post('show.rider.details','RiderController@showRider')->name('show.rider.details');
 Route::post('verify.rider','RiderController@_verifyRider')->name('verify.rider');
 Route::post('block.rider','RiderController@_blockRider')->name('block.rider');
 Route::post('update.rider.store','StoreRiderModelController@store')->name('update.rider.store');
 
-Route::get('store.destroy/{id}','StoreController@destroy')->name('store.destroy');
+// Route::get('store.destroy/{id}','StoreController@destroy')->name('store.destroy');
 
-Route::resource('store','StoreController');
-Route::resource('rider','RiderController');
+Route::resource('store','StoreController')->middleware('auth');
+Route::resource('rider','RiderController')->middleware('auth');
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
