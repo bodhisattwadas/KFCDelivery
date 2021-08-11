@@ -13,27 +13,34 @@ use Illuminate\Validation\Rule;
 class AjaxController extends Controller
 {
     public function _getLoginStatus(Request $request){
+        $validator = Validator::make($request->all(), [
+            'api_token'=>[
+                'required',
+                Rule::in([env('API_KEY')]),
+            ],
+            'email' => 'required|email|exists:users',
+        ]);
+         
+        if($validator->fails()){
+            return response()->json([
+                "status" => 'fail',
+                "message" => $validator->errors(),
+            ]);
+        }
         $user = User::where('email',$request->get('email'))
                     ->get()->first();
-        if(!is_null($user)){
-            if(Hash::check($request->get('password'), $user['password'])){
-                $status = 'success';
-                $message = 'user found!!';
-            }
-            else {
-                $status = 'fail';
-                $message = 'user found , but error in password';
-            }
+
+        if(Hash::check($request->get('password'), $user['password'])){
+                        return response()->json([
+                            "status" => 'success',
+                            "message" => 'User found and success in login',
+            ]);
         }else{
-            $status = 'fail';
-            $message = 'user not found';
+            return response()->json([
+                "status" => 'fail',
+                "message" => 'Error occurred',
+]);
         }
-        return json_encode(
-            [
-                'status'=>$status,
-                'message'=>$message
-            ]
-        );
     }
     public function _createUser(Request $request){
         $validator = Validator::make($request->all(), [
