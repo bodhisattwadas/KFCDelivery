@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\RiderLogController;
+use App\Http\Controllers\RiderDeliveryStatusController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +30,7 @@ Route::post('/create.user','AjaxController@_createUser')->name('create.user');
 Route::post('/get.verified.status','AjaxController@_getVerifiedStatus')->name('get.verified.status');
 Route::post('/update.profile','AjaxController@_updateProfile')->name('update.profile');
 Route::post('/profile.update.status','AjaxController@_checkProfileUpdateStatus')->name('profile.update.status');
+Route::post('/update.delivery.status','RiderDeliveryStatusController@_setStatus')->name('update.delivery.status');
 Route::post('/set.log','RiderLogController@_setLog')->name('set.log');
 Route::post('/get.log','RiderLogController@_getLog')->name('get.log');
 

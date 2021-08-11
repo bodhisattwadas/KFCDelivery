@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Model\RiderDeliveryStatusModel;
+use App\Models\RiderDeliveryStatusModel;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class RiderDeliveryStatusController extends Controller
@@ -29,7 +30,16 @@ class RiderDeliveryStatusController extends Controller
             ]);
         }else{
             $rsModel = new RiderDeliveryStatusModel([
-
+            'email' => $request->get('email'),
+            'order_id' => $request->get('order_id'),
+            'order_status'=>$request->get('order_status'),
+            'latitude' => $request->get('latitude'),
+            'longitude' => $request->get('longitude'),
+            ]);
+            $rsModel->save();
+            return response()->json([
+                "status" => 'success',
+                "message" => 'updated',
             ]);
         }
     }
