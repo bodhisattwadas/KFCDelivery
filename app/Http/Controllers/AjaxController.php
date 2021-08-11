@@ -8,6 +8,7 @@ use App\Models\OrderModel;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Response as FacadeResponse;
+use Illuminate\Validation\Rule;
 
 class AjaxController extends Controller
 {
@@ -36,6 +37,10 @@ class AjaxController extends Controller
     }
     public function _createUser(Request $request){
         $validator = Validator::make($request->all(), [
+            'api_token'=>[
+                'required',
+                Rule::in([env('API_KEY')]),
+            ],
             'email' => 'required|email|unique:users',
             'name' => 'required|string|max:50',
             'password' => 'required'
@@ -70,6 +75,10 @@ class AjaxController extends Controller
     }
     public function _getVerifiedStatus(Request $request){
         $validator = Validator::make($request->all(), [
+            'api_token'=>[
+                'required',
+                Rule::in([env('API_KEY')]),
+            ],
             'email' => 'required|email|exists:users',
         ]);
          
@@ -86,6 +95,10 @@ class AjaxController extends Controller
     }
     public function _updateProfile(Request $request){
         $validator = Validator::make($request->all(), [
+            'api_token'=>[
+                'required',
+                Rule::in([env('API_KEY')]),
+            ],
             'email' => 'required|email|exists:users',
             'aadhar_picture' => 'required',
             'dl_picture' => 'required',
@@ -143,6 +156,10 @@ class AjaxController extends Controller
     }
     public function _checkProfileUpdateStatus(Request $request){
         $validator = Validator::make($request->all(), [
+            'api_token'=>[
+                'required',
+                Rule::in([env('API_KEY')]),
+            ],
             'email' => 'required|email'
         ]);
          

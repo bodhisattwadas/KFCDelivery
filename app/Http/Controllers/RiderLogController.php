@@ -6,6 +6,7 @@ use App\Models\RiderLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class RiderLogController extends Controller
 {
@@ -17,9 +18,12 @@ class RiderLogController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function _setLog(Request $request)
-    {
+    public function _setLog(Request $request){
         $validator = Validator::make($request->all(), [
+            'api_token'=>[
+                'required',
+                Rule::in([env('API_KEY')]),
+            ],
             'email' => 'required|email|exists:users',
         ]);
          
@@ -39,9 +43,12 @@ class RiderLogController extends Controller
             "message" => $request->get('status'),
         ]);
     }
-    public function _getLog(Request $request)
-    {
+    public function _getLog(Request $request){
         $validator = Validator::make($request->all(), [
+            'api_token'=>[
+                'required',
+                Rule::in([env('API_KEY')]),
+            ],
             'email' => 'required|email|exists:users',
         ]);
          

@@ -20,6 +20,8 @@ class CreateUsersTable extends Migration
             $table->string('email');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('verified')->nullable()->default('no');
+            $table->string('role')->default('rider');
 
             $table->string('phone_number1')->nullable();
             $table->string('phone_number2')->nullable();
@@ -28,9 +30,7 @@ class CreateUsersTable extends Migration
             $table->string('location')->nullable();
             $table->string('aadhar_picture')->nullable();
             $table->string('dl_picture')->nullable();
-            $table->string('verified')->nullable()->default('no');
-
-            $table->string('role');
+            
 
             $table->rememberToken();
             $table->timestamps();

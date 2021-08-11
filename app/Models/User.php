@@ -20,6 +20,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'verified',
+        'role',
 
         'phone_number1',
         'phone_number2',
@@ -28,8 +30,7 @@ class User extends Authenticatable
         'location',
         'aadhar_picture',
         'dl_picture',
-        'verified',
-        'role'
+        
     ];
 
     /**
