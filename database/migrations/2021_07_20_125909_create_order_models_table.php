@@ -22,13 +22,13 @@ class CreateOrderModelsTable extends Migration
             //$table->integer('order_details');
             //OrderDetails
             
-            $table->datetime('scheduled_time');
+            $table->string('scheduled_time');
             $table->string('order_value')->nullable();
-            $table->integer('paid')->default(0);
+            $table->enum('paid',['true','false']);
             $table->string('client_order_id');
             $table->string('drop_instruction_text')->nullable();
-            $table->integer('take_drop_off_picture')->default(0);
-            $table->integer('drop_off_picture_mandatory')->default(0);
+           // $table->integer('take_drop_off_picture')->nullable()->default(0);
+           // $table->integer('drop_off_picture_mandatory')->nullable()->default(0);
             
             //CustomerDetails
             //$table->integer('customer_details');
@@ -43,7 +43,7 @@ class CreateOrderModelsTable extends Migration
 
             //MiscDetails
             //$table->integer('misc');
-            $table->string('type')->default('express');
+            $table->enum('type',['slotted','express']);
             $table->integer('pickup_otp')->nullable();
 
             //$table->integer('product_details')->nullable();

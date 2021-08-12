@@ -19,7 +19,7 @@ class AjaxController extends Controller
                 Rule::in([env('API_KEY')]),
             ],
             'email' => 'required|email|exists:users',
-        ]);
+            ]);
          
         if($validator->fails()){
             return response()->json([
@@ -39,7 +39,7 @@ class AjaxController extends Controller
             return response()->json([
                 "status" => 'fail',
                 "message" => 'Error occurred',
-]);
+            ]);
         }
     }
     public function _createUser(Request $request){
@@ -197,6 +197,8 @@ class AjaxController extends Controller
             }
         }
     }
+
+    
 
     
 }

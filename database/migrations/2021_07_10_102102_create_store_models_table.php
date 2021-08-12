@@ -22,7 +22,12 @@ class CreateStoreModelsTable extends Migration
         });
         DB::table('store_models')->insert(
             array(
-                ['store_code'=>'k101','store_name'=>'test location']
+                ['store_code'=>'312','store_name'=>'KFC - City Centre -II'],
+                ['store_code'=>'304','store_name'=>'KFC - Park Street'],
+                ['store_code'=>'325','store_name'=>'KFC - RB Connector Kolkatta'],
+                ['store_code'=>'332','store_name'=>'KFC - DNC Mall Kolkata'],
+                ['store_code'=>'345','store_name'=>'KFC- Shree Tower VIP Road'],
+                ['store_code'=>'377','store_name'=>'KFC - Nicco Park, Kolkata'],
             )
         );
     }
