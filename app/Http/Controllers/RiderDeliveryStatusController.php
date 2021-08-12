@@ -4,18 +4,93 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\RiderDeliveryStatusModel;
+use App\Models\User;
 use App\Models\RiderMovementStatusModel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Carbon\Carbon;
 
 class RiderDeliveryStatusController extends Controller
 {
     //'email','order_id','order_status','latitude','longitude'
+    public function _getStatus(Request $request){
+        $validator = Validator::make($request->all(), [
+            'api_token'=>[
+                'required',
+                Rule::in(['I1SYy1kJ0D6WqSlMPdxi6Wv2WZK8O6GzY']),
+            ],
+            'order_id' => 'required',
+        ]);
+         
+        if($validator->fails()){
+            return response()->json([
+                "status" => 'fail',
+                "message" => $validator->errors(),
+            ]);
+        }else{
+            $status = RiderDeliveryStatusModel::where('order_id',$request->get('order_id'))->latest()->first()->get();
+            if(!$status){
+                return response()->json([
+                    "status" => 'fail',
+                    "message" => "No status data found",
+                ]);
+            }else{
+                return response()->json([
+                    "status" => 'success',
+                    "message" => [
+                        "_time" => $status[0]->created_at,
+                        "rider_name" => User::where("email",$status[0]->email)->get()->first()->name,
+                        "order_id" => $request->get('order_id'),
+                        "order_status"=> strtoupper($status[0]->order_status),
+                        "rider_latitude" => $status[0]->latitude,
+                        "rider_longitude" => $status[0]->longitude,
+
+                    ]
+                ]);
+            }
+        }
+    }
+    public function _getMovementStatus(Request $request){
+        $validator = Validator::make($request->all(), [
+            'api_token'=>[
+                'required',
+                Rule::in(['I1SYy1kJ0D6WqSlMPdxi6Wv2WZK8O6GzY']),
+            ],
+            'order_id' => 'required',
+        ]);
+         
+        if($validator->fails()){
+            return response()->json([
+                "status" => 'fail',
+                "message" => $validator->errors(),
+            ]);
+        }else{
+            $status = RiderMovementStatusModel::where('order_id',$request->get('order_id'))->latest()->first()->get();
+            if(!$status){
+                return response()->json([
+                    "status" => 'fail',
+                    "message" => "No status data found",
+                ]);
+            }else{
+                return response()->json([
+                    "status" => 'success',
+                    "message" => [
+                        "_time" => $status[0]->created_at,
+                        "rider_name" => User::where("email",$status[0]->email)->get()->first()->name,
+                        "order_id" => $request->get('order_id'),
+                        "rider_latitude" => $status[0]->latitude,
+                        "rider_longitude" => $status[0]->longitude,
+
+                    ]
+                ]);
+            }
+        }
+    }
     public function _setStatus(Request $request){
         $validator = Validator::make($request->all(), [
             'api_token'=>[
                 'required',
-                Rule::in([env('API_KEY')]),
+                Rule::in(['I1SYy1kJ0D6WqSlMPdxi6Wv2WZK8O6GzY']),
             ],
             'email' => 'required|email|exists:users',
             'order_id' => 'required',
@@ -48,7 +123,7 @@ class RiderDeliveryStatusController extends Controller
         $validator = Validator::make($request->all(), [
             'api_token'=>[
                 'required',
-                Rule::in([env('API_KEY')]),
+                Rule::in(['I1SYy1kJ0D6WqSlMPdxi6Wv2WZK8O6GzY']),
             ],
             'email' => 'required|email|exists:users',
             'order_id' => 'required',

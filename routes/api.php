@@ -31,10 +31,15 @@ Route::post('/get.verified.status','AjaxController@_getVerifiedStatus')->name('g
 Route::post('/update.profile','AjaxController@_updateProfile')->name('update.profile');
 Route::post('/profile.update.status','AjaxController@_checkProfileUpdateStatus')->name('profile.update.status');
 Route::post('/update.delivery.status','RiderDeliveryStatusController@_setStatus')->name('update.delivery.status');
+
+Route::post('/get.status','RiderDeliveryStatusController@_getStatus')->name('get.status');
+Route::post('/get.location','RiderDeliveryStatusController@_getMovementStatus')->name('get.location');
+
 Route::post('/update.movement.status','RiderDeliveryStatusController@_setMovementStatus')->name('update.movement.status');
 Route::post('/set.log','RiderLogController@_setLog')->name('set.log');
 Route::post('/get.log','RiderLogController@_getLog')->name('get.log');
 
 
 Route::post('/create.order','OrderController@_createOrder')->name('create.order');
+
 

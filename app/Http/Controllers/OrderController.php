@@ -15,7 +15,7 @@ class OrderController extends Controller
         $validator = Validator::make($request->all(), [
             'api_token'=>[
                 'required',
-                Rule::in([env('API_KEY')]),
+                Rule::in(['I1SYy1kJ0D6WqSlMPdxi6Wv2WZK8O6GzY']),
             ],
             'picup_contact_number' => 'required',
             'store_code' => 'required|exists:store_models',
