@@ -17,7 +17,7 @@ class RiderDeliveryStatusController extends Controller
         $validator = Validator::make($request->all(), [
             'api_token'=>[
                 'required',
-                Rule::in(['I1SYy1kJ0D6WqSlMPdxi6Wv2WZK8O6GzY']),
+                Rule::in([env('API_KEY')]),
             ],
             'order_id' => 'required',
         ]);
@@ -54,7 +54,7 @@ class RiderDeliveryStatusController extends Controller
         $validator = Validator::make($request->all(), [
             'api_token'=>[
                 'required',
-                Rule::in(['I1SYy1kJ0D6WqSlMPdxi6Wv2WZK8O6GzY']),
+                Rule::in([env('API_KEY')]),
             ],
             'order_id' => 'required',
         ]);
@@ -90,7 +90,7 @@ class RiderDeliveryStatusController extends Controller
         $validator = Validator::make($request->all(), [
             'api_token'=>[
                 'required',
-                Rule::in(['I1SYy1kJ0D6WqSlMPdxi6Wv2WZK8O6GzY']),
+                Rule::in([env('API_KEY')]),
             ],
             'email' => 'required|email|exists:users',
             'order_id' => 'required',
@@ -123,7 +123,7 @@ class RiderDeliveryStatusController extends Controller
         $validator = Validator::make($request->all(), [
             'api_token'=>[
                 'required',
-                Rule::in(['I1SYy1kJ0D6WqSlMPdxi6Wv2WZK8O6GzY']),
+                Rule::in([env('API_KEY')]),
             ],
             'email' => 'required|email|exists:users',
             'order_id' => 'required',

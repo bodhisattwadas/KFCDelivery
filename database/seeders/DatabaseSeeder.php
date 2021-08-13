@@ -18,6 +18,6 @@ class DatabaseSeeder extends Seeder
          //MiscModel::factory(10)->create();
          //ProductModel::factory(10)->create();
          //StoreModel::factory(10)->create();
-         User::factory(50)->create();
+         User::factory(10)->create();
     }
 }

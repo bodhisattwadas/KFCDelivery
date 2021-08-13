@@ -74,4 +74,5 @@ class RiderLogController extends Controller
             "message" => $status->status,
         ]);
     }
+    
 }

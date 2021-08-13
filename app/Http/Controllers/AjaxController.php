@@ -50,7 +50,8 @@ class AjaxController extends Controller
             ],
             'email' => 'required|email|unique:users',
             'name' => 'required|string|max:50',
-            'password' => 'required'
+            'password' => 'required',
+            'phone_number'=>'required|numeric|digits:10'
         ]);
          
         if($validator->fails()){
@@ -64,6 +65,7 @@ class AjaxController extends Controller
                        'name' => $request->get('name'),
                        'email' => $request->get('email'),
                        'password' => Hash::make($request->get('password')),
+                       'phone_number1'=>$request->get('phone_number'),
                        'verified'=>'no',
                        'role'=>'rider'
                     ]);

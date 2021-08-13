@@ -30,7 +30,7 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'role'=>'rider',
             'verified'=>'no',
-            'phone_number1'=>$this->faker->phoneNumber
+            'phone_number1'=>rand(6,9).rand(100,999).rand(100,999).rand(100,999),
         ];
     }
 

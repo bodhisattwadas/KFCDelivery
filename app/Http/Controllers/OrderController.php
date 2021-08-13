@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\OrderModel;
+use App\Models\RiderLog;
 use App\Models\User;
 use App\Models\StoreRiderModel;
 use Illuminate\Support\Facades\Validator;
@@ -15,21 +16,21 @@ class OrderController extends Controller
         $validator = Validator::make($request->all(), [
             'api_token'=>[
                 'required',
-                Rule::in(['I1SYy1kJ0D6WqSlMPdxi6Wv2WZK8O6GzY']),
+                Rule::in([env('API_KEY')]),
             ],
-            'picup_contact_number' => 'required',
+            'picup_contact_number' => 'required|numeric|digits:10',
             'store_code' => 'required|exists:store_models',
             'scheduled_time'=> 'required',
             'client_order_id'=> 'required',
             
             'name' =>'required',
-            'contact_number'=>'required',
+            'contact_number'=>'required|numeric|digits:10',
             'address_line_1'=>'required',
             'address_line_2'=>'required',
             'city'=>'required',
             'latitude'=>'required',
             'longitude'=>'required',
-            'pin'=>'required',
+            'pin'=>'required|numeric|digits:6',
             'paid' => [
                 'required',
                 Rule::in(['true','false']),
@@ -79,7 +80,31 @@ class OrderController extends Controller
                             "name"=>$riderDetails['name'],
                             "phone"=>$riderDetails['phone_number1'],
                         ],
-                        "slingo_order_id"=>$order->id,
+                        "customer_details"=>[
+                            'cust_name'=> $request->get('name'),
+                            'cust_phone'=> $request->get('contact_number'),
+                            'cust_address_line_1'=> $request->get('address_line_1'),
+                            'cust_address_line_2'=> $request->get('address_line_2'),
+                            'cust_city'=> $request->get('city'),
+                            'cust_latitude'=> $request->get('latitude'),
+                            'cust_longitude'=> $request->get('longitude'),
+                            'cust_pin'=> $request->get('pin'),
+                        ],
+                        "order_details"=>[
+                            'slingo_order_id'=>$order->id,
+                            'picup_contact_number' => $request->get('picup_contact_number'),
+                            'store_code' => $request->get('store_code'),
+                            'scheduled_time' => $request->get('scheduled_time'),
+                            'order_value'=> $request->get('order_value'),
+                            'paid'=> $request->get('paid'),
+                            'client_order_id'=> $request->get('client_order_id'),
+                            'drop_instruction_text'=> $request->get('drop_instruction_text'),
+                        ],
+                        "misc_details"=>[
+                            'order_type'=> $request->get('type'),
+                            'order_pickup_otp'=> $request->get('pickup_otp')
+                        ],
+                        
                         //"track_url"=> "sss",
                     ],
                 ]);
@@ -102,7 +127,19 @@ class OrderController extends Controller
         }
     }
     public function _getRider($store){
-        $riders = StoreRiderModel::where('store_code',$store)->get()->toArray();
+        $riders = StoreRiderModel::where('store_code',$store)
+                    ->join('users', function ($join) {
+                        $join->on('store_rider_models.rider_code', '=', 'users.id')
+                            ->where('users.verified','yes');
+                        })
+                    ->get()->toArray();
+        $tempRider = array();
+        foreach($riders as $rider){
+            if(RiderLog::where('rider_code',$rider['rider_code'])->latest()->first()->status == 'in'){
+                array_push($tempRider,$rider);
+            }
+        }
+        $riders = $tempRider;
         if($riders){
             shuffle($riders);
             return User::find($riders[0]['rider_code']);
