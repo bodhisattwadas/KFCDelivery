@@ -37,7 +37,8 @@ class CreateUsersTable extends Migration
         });
         DB::table('users')->insert(
             array(
-                ['name'=>'admin','email'=>'admin@kfc.com','verified'=>'yes','password' => Hash::make('irishhngf'),'role' => 'admin']
+                ['name'=>'admin','email'=>'admin@kfc.com','verified'=>'yes','password' => Hash::make('irishhngf'),'role' => 'admin'],
+                ['name'=>'bodhisattwa','email'=>'das.bodhisattwa@gmail.com','verified'=>'yes','password' => Hash::make('irishhngf'),'role' => 'rider'],
             )
         );
     }

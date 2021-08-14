@@ -40,6 +40,9 @@ Route::post('/set.log','RiderLogController@_setLog')->name('set.log');
 Route::post('/get.log','RiderLogController@_getLog')->name('get.log');
 
 
+
+
 Route::post('/create.order','OrderController@_createOrder')->name('create.order');
+Route::post('/order.details','OrderController@_getOrderDetails')->name('order.details');
 
 

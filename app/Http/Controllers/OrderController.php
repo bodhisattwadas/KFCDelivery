@@ -8,7 +8,9 @@ use App\Models\RiderLog;
 use App\Models\User;
 use App\Models\StoreRiderModel;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\RiderLogController;
 use Illuminate\Validation\Rule;
+use Log;
 
 class OrderController extends Controller
 {
@@ -71,11 +73,13 @@ class OrderController extends Controller
                     'type'=> $request->get('type'),
                     'pickup_otp'=> $request->get('pickup_otp'),
                     'rider_code'=>$riderDetails['id'],
+                    'order_status'=>'delivery',
                 ]);
                 $order->save();
-                $log = new App\Http\Controllers\RiderLogController();
+                $log = new RiderLogController();
                 $log->_setSpecificLog($riderDetails['id'],'delivery');
-                
+                $rep_email  =  str_replace("@", "", $riderDetails['email']);
+                $this->_sendFCM($rep_email);
 
                 return response()->json([
                     "message" => 'success',
@@ -127,9 +131,51 @@ class OrderController extends Controller
                     ],
                 ]);
             }
-
-            
         }
+    }
+    public function _getOrderDetails(Request $request){
+        $validator = Validator::make($request->all(), [
+            'api_token'=>[
+                'required',
+                Rule::in([env('API_KEY')]),
+            ],
+            'email'=>'required|email|exists:users',
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                "status" => 'fail',
+                "message" => $validator->errors(),
+            ]);
+        }else{
+            $order = OrderModel::where([
+                ["rider_code",User::where('email',$request->get('email'))->get()->first()->id],
+                ['order_status','delivery']
+            ])->get()->first();
+            if(!$order){
+                return response()->json([
+                    "message" => 'fail',
+                    "data" => [],
+                ]);
+            }else{
+                return response()->json([
+                    "message" => 'success',
+                    "data" => [
+                        'picup_contact_number' => $order->picup_contact_number,
+                        'pickup_otp'=> $order->pickup_otp,
+                        'name'=> $order->name,
+                        'contact_number'=> $order->contact_number,
+                        'address_line_1'=> $order->address_line_1,
+                        'address_line_2'=> $order->address_line_2,
+                        'city'=> $order->city,
+                        'latitude'=> $order->latitude,
+                        'longitude'=> $order->longitude,
+                        'pin'=> $order->pin,
+                        'drop_instruction_text'=> $order->drop_instruction_text,
+                    ],
+                ]);
+            }
+        }
+
     }
     public function _getRider($store){
         $riders = StoreRiderModel::where('store_code',$store)
@@ -140,10 +186,16 @@ class OrderController extends Controller
                     ->get()->toArray();
         $tempRider = array();
         foreach($riders as $rider){
-            if(RiderLog::where('rider_code',$rider['rider_code'])->latest()->first()->status == 'in'){
-                array_push($tempRider,$rider);
+            Log::debug($rider['rider_code']);
+            try{
+                if(RiderLog::where('rider_code',$rider['rider_code'])->latest()->first()->status == 'in'){
+                    array_push($tempRider,$rider);
+                }
+            }catch(\Exception $e){
+                Log::debug($e->getMessage());
             }
         }
+        
         $riders = $tempRider;
         if($riders){
             shuffle($riders);
@@ -152,5 +204,32 @@ class OrderController extends Controller
             return null;
         }
         
+    }
+
+    public function _sendFCM($email){
+        $url = 'https://fcm.googleapis.com/fcm/send';
+        $apiKey = "AAAAr--XuFw:APA91bERoG8cjoNcTMamXkQTbUzI2oWY7T1FjlJ0aGY5zVLe1jvT5wRoj43985sVg96OWSZHnMgAxAIzVKTuV3POleEdZjvLj-NVBFn8CPOMHHzbkTeeIyri7crY1r8GWkPpWyJRg8YE";
+        $headers = array(
+            'Authorization:key=' . $apiKey,
+            'Content-Type:application/json'
+        );
+        $notify = [
+            'title' => "New Order",
+            'body' => "A new order has arrived",
+        ];
+        $apiBody = [
+            'notification' => $notify,
+            'to' => '/topics/' . $email
+        ];
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($apiBody));
+        $result = curl_exec($ch);
+        //print($result);
+        curl_close($ch);
+        //return $result;
     }
 }

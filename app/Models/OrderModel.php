@@ -13,6 +13,6 @@ class OrderModel extends Model
                             'drop_instruction_text',
                             // 'take_drop_off_picture','drop_off_picture_mandatory',
                             'name','contact_number','address_line_1','address_line_2','city',
-                            'latitude','longitude','pin','type','pickup_otp','rider_code'
+                            'latitude','longitude','pin','type','pickup_otp','rider_code','order_status'
                         ];
 }

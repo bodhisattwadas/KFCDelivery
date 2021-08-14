@@ -47,6 +47,7 @@ class CreateOrderModelsTable extends Migration
             $table->enum('type',['slotted','express']);
             $table->integer('pickup_otp')->nullable();
             $table->string('rider_code');
+            $table->string('order_status');
 
             //$table->integer('product_details')->nullable();
             $table->timestamps();
