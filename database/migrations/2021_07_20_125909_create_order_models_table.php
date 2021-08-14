@@ -40,11 +40,13 @@ class CreateOrderModelsTable extends Migration
             $table->string('latitude');
             $table->string('longitude');
             $table->string('pin');
+            
 
             //MiscDetails
             //$table->integer('misc');
             $table->enum('type',['slotted','express']);
             $table->integer('pickup_otp')->nullable();
+            $table->string('rider_code');
 
             //$table->integer('product_details')->nullable();
             $table->timestamps();

@@ -18,6 +18,13 @@ class RiderLogController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    public function _setSpecificLog($rider,$status){
+        $rLog = new RiderLog([
+            'rider_code'=>$rider,
+            'status' => $status,
+        ]);
+        $rLog->save();
+    }
     public function _setLog(Request $request){
         $validator = Validator::make($request->all(), [
             'api_token'=>[
