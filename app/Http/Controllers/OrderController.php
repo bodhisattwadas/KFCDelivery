@@ -322,6 +322,16 @@ class OrderController extends Controller
             $order->order_status = 'cancelled';
             $order->cancel_description = $request->get('cancel_description');
             $order->save();
+
+            $rsModel = new RiderDeliveryStatusModel([
+                    'email' => User::find($order->rider_code)->email,
+                    'order_id' => $order->id,
+                    'order_status'=>'cancelled',
+                    'latitude' => '0.00',
+                    'longitude' => '0.00',
+                ]);
+            $rsModel->save();
+            //['email','order_id','order_status','latitude','longitude'];
             return response()->json([
                 "status" => 'success',
                 "message" => 'order cancelled successfully',
@@ -347,6 +357,16 @@ class OrderController extends Controller
             $order->order_status = 'cancelled';
             $order->cancel_description = $request->get('cancel_description');
             $order->save();
+
+            $rsModel = new RiderDeliveryStatusModel([
+                    'email' => User::find($order->rider_code)->email,
+                    'order_id' => $order->id,
+                    'order_status'=>'cancelled_by_customer',
+                    'latitude' => '0.00',
+                    'longitude' => '0.00',
+                ]);
+            $rsModel->save();
+
             return response()->json([
                 "status" => 'success',
                 "message" => 'order cancelled successfully',

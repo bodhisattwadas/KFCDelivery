@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Carbon\Carbon;
 use App\Http\Controllers\RiderLogController;
+use Log;
 
 class RiderDeliveryStatusController extends Controller
 {
@@ -30,7 +31,8 @@ class RiderDeliveryStatusController extends Controller
                 "message" => $validator->errors(),
             ]);
         }else{
-            $status = RiderDeliveryStatusModel::where('order_id',$request->get('order_id'))->latest()->first()->get();
+            $status = RiderDeliveryStatusModel::where('order_id',$request->get('order_id'))->latest()->first();
+            Log::debug($status->id);
             if(!$status){
                 return response()->json([
                     "status" => 'fail',
@@ -40,13 +42,12 @@ class RiderDeliveryStatusController extends Controller
                 return response()->json([
                     "status" => 'success',
                     "message" => [
-                        "_time" => $status[0]->created_at,
-                        "rider_name" => User::where("email",$status[0]->email)->get()->first()->name,
+                        "_time" => $status->created_at,
+                        "rider_name" => User::where("email",$status->email)->get()->first()->name,
                         "order_id" => $request->get('order_id'),
-                        "order_status"=> strtoupper($status[0]->order_status),
-                        "rider_latitude" => $status[0]->latitude,
-                        "rider_longitude" => $status[0]->longitude,
-
+                        "order_status"=> strtoupper($status->order_status),
+                        "rider_latitude" => $status->latitude,
+                        "rider_longitude" => $status->longitude,
                     ]
                 ]);
             }
