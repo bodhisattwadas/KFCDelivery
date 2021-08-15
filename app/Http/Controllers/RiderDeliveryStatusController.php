@@ -128,6 +128,9 @@ class RiderDeliveryStatusController extends Controller
                 if($request->get('order_status') == 'returned_to_seller'){
                     (new RiderLogController())->_setSpecificLog($order->rider_code,'in');
                 }
+                $order->order_status = $request->get('order_status');
+                $order->save();
+                
                 return response()->json([
                     "status" => 'success',
                     "message" => 'updated',
