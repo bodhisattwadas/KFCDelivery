@@ -173,6 +173,8 @@ class OrderController extends Controller
                         'longitude'=> $order->longitude,
                         'pin'=> $order->pin,
                         'drop_instruction_text'=> $order->drop_instruction_text,
+                        'order_value' => $order->order_value,
+                        'paid'=> $order->paid,
                     ],
                 ]);
             }
