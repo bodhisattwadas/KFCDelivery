@@ -150,7 +150,12 @@ class OrderController extends Controller
             $order = OrderModel::where([
                 ["rider_code",User::where('email',$request->get('email'))->get()->first()->id],
                 ['order_status','delivery']
-            ])->get()->first();
+            ])
+            ->orWhere([
+                ["rider_code",User::where('email',$request->get('email'))->get()->first()->id],
+                ['order_status','cancelled']
+            ])
+            ->get()->first();
             if(!$order){
                 return response()->json([
                     "message" => 'fail',
@@ -160,6 +165,7 @@ class OrderController extends Controller
                 return response()->json([
                     "message" => 'success',
                     "data" => [
+                        'order_id'=>$order->id,
                         'picup_contact_number' => $order->picup_contact_number,
                         'pickup_otp'=> $order->pickup_otp,
                         'name'=> $order->name,
@@ -208,7 +214,7 @@ class OrderController extends Controller
 
     public function _sendFCM($email){
         $url = 'https://fcm.googleapis.com/fcm/send';
-        $apiKey = "AAAAr--XuFw:APA91bERoG8cjoNcTMamXkQTbUzI2oWY7T1FjlJ0aGY5zVLe1jvT5wRoj43985sVg96OWSZHnMgAxAIzVKTuV3POleEdZjvLj-NVBFn8CPOMHHzbkTeeIyri7crY1r8GWkPpWyJRg8YE";
+        $apiKey = env('FIREBASE_KEY');
         $headers = array(
             'Authorization:key=' . $apiKey,
             'Content-Type:application/json'
