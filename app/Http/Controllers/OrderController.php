@@ -7,6 +7,7 @@ use App\Models\OrderModel;
 use App\Models\RiderLog;
 use App\Models\User;
 use App\Models\StoreRiderModel;
+use App\Models\RiderDeliveryStatusModel;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\RiderLogController;
 use Illuminate\Validation\Rule;
@@ -60,8 +61,6 @@ class OrderController extends Controller
                     'paid'=> $request->get('paid'),
                     'client_order_id'=> $request->get('client_order_id'),
                     'drop_instruction_text'=> $request->get('drop_instruction_text'),
-                    //'take_drop_off_picture'=> $request->get(),
-                    //'drop_off_picture_mandatory'=> $request->get(),
                     'name'=> $request->get('name'),
                     'contact_number'=> $request->get('contact_number'),
                     'address_line_1'=> $request->get('address_line_1'),
@@ -73,13 +72,12 @@ class OrderController extends Controller
                     'type'=> $request->get('type'),
                     'pickup_otp'=> $request->get('pickup_otp'),
                     'rider_code'=>$riderDetails['id'],
-                    'order_status'=>'delivery',
+                    'order_status'=>'allocated',
                 ]);
                 $order->save();
-                $log = new RiderLogController();
-                $log->_setSpecificLog($riderDetails['id'],'delivery');
-                $rep_email  =  str_replace("@", "", $riderDetails['email']);
-                $this->_sendFCM($rep_email);
+
+                (new RiderLogController())->_setSpecificLog($riderDetails['id'],'delivery');
+                $this->_sendFCM(str_replace("@", "", $riderDetails['email']));
 
                 return response()->json([
                     "message" => 'success',
@@ -147,14 +145,11 @@ class OrderController extends Controller
                 "message" => $validator->errors(),
             ]);
         }else{
-            $order = OrderModel::where([
-                ["rider_code",User::where('email',$request->get('email'))->get()->first()->id],
-                ['order_status','delivery']
-            ])
-            ->orWhere([
-                ["rider_code",User::where('email',$request->get('email'))->get()->first()->id],
-                ['order_status','cancelled']
-            ])
+            //'allocated','arrived','dispatched','arrived_customer_doorstep','delivered','returned_to_seller'
+            
+
+            $order = OrderModel::where("rider_code",User::where('email',$request->get('email'))->get()->first()->id)
+            ->whereIn('order_status',['allocated','arrived','dispatched','arrived_customer_doorstep','delivered','cancelled','cancelled_by_customer'])
             ->get()->first();
             if(!$order){
                 return response()->json([
@@ -166,6 +161,7 @@ class OrderController extends Controller
                     "message" => 'success',
                     "data" => [
                         'order_id'=>$order->id,
+                        'order_status'=>$order->order_status,
                         'picup_contact_number' => $order->picup_contact_number,
                         'pickup_otp'=> $order->pickup_otp,
                         'name'=> $order->name,
@@ -183,6 +179,73 @@ class OrderController extends Controller
         }
 
     }
+    public function _getDeliveryStatusArray(Request $request){
+        $validator = Validator::make($request->all(), [
+            'api_token'=>[
+                'required',
+                Rule::in([env('API_KEY')]),
+            ],
+            'email'=>'required|email|exists:users',
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                "status" => 'fail',
+                "message" => $validator->errors(),
+            ]);
+        }else{
+            $order = OrderModel::where("rider_code",User::where('email',$request->get('email'))->get()->first()->id)
+            ->whereIn('order_status',['allocated','arrived','dispatched','arrived_customer_doorstep','delivered','cancelled','cancelled_by_customer'])
+            ->get()->first();
+            if(!$order){
+                return response()->json([
+                    "message" => 'fail',
+                    "data" => [],
+                ]);
+            }else{
+                // Log::debug([
+                //                 ["email",$request->get('email')],
+                //                 ["order_id",$order->id],
+                //                 ["order_status",'allocated'],
+                //             ]);
+                return response()->json([
+                    // 'allocated','arrived','dispatched','arrived_customer_doorstep','delivered','cancelled','cancelled_by_customer'
+                    "message" => 'success',
+                    "data" => [
+                        'allocated' => (RiderDeliveryStatusModel::where([
+                                ["email",$request->get('email')],
+                                ["order_id",$order->id],
+                                ["order_status",'allocated'],
+                            ])->get()->count() != 0)?true:false,
+                        'arrived' => (RiderDeliveryStatusModel::where([
+                                ["email",$request->get('email')],
+                                ["order_id",$order->id],
+                                ["order_status",'arrived'],
+                            ])->get()->count() != 0)?true:false,
+                        'dispatched' => (RiderDeliveryStatusModel::where([
+                                ["email",$request->get('email')],
+                                ["order_id",$order->id],
+                                ["order_status",'dispatched'],
+                            ])->get()->count() != 0)?true:false,
+                        'arrived_customer_doorstep' => (RiderDeliveryStatusModel::where([
+                                ["email",$request->get('email')],
+                                ["order_id",$order->id],
+                                ["order_status",'arrived_customer_doorstep'],
+                            ])->get()->count() != 0)?true:false,
+                        'delivered' => (RiderDeliveryStatusModel::where([
+                                ["email",$request->get('email')],
+                                ["order_id",$order->id],
+                                ["order_status",'delivered'],
+                            ])->get()->count() != 0)?true:false,
+                        'cancelled' => ($order->order_status == 'cancelled')?true:false,
+                        'cancelled_by_customer' => ($order->order_status == 'cancelled_by_customer')?true:false,
+                    ],
+                ]);
+            }
+        }
+
+    }
+
+
     public function _getRider($store){
         $riders = StoreRiderModel::where('store_code',$store)
                     ->join('users', function ($join) {
@@ -237,5 +300,55 @@ class OrderController extends Controller
         //print($result);
         curl_close($ch);
         //return $result;
+    }
+
+    public function _cancelOrder(Request $request){
+        $validator = Validator::make($request->all(), [
+            'api_token'=>[
+                'required',
+                Rule::in([env('API_KEY')]),
+            ],
+            'order_id'=>'required|exists:order_models,id',
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                "status" => 'fail',
+                "message" => $validator->errors(),
+            ]);
+        }else{
+            $order = OrderModel::find($request->get('order_id'));
+            $order->order_status = 'cancelled';
+            $order->cancel_description = $request->get('cancel_description');
+            $order->save();
+            return response()->json([
+                "status" => 'success',
+                "message" => 'order cancelled successfully',
+            ]);
+        }
+    }
+
+    public function _cancelOrderByCustomer(Request $request){
+        $validator = Validator::make($request->all(), [
+            'api_token'=>[
+                'required',
+                Rule::in([env('API_KEY')]),
+            ],
+            'order_id'=>'required|exists:order_models,id',
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                "status" => 'fail',
+                "message" => $validator->errors(),
+            ]);
+        }else{
+            $order = OrderModel::find($request->get('order_id'));
+            $order->order_status = 'cancelled';
+            $order->cancel_description = $request->get('cancel_description');
+            $order->save();
+            return response()->json([
+                "status" => 'success',
+                "message" => 'order cancelled successfully',
+            ]);
+        }
     }
 }

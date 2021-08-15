@@ -48,6 +48,7 @@ class CreateOrderModelsTable extends Migration
             $table->integer('pickup_otp')->nullable();
             $table->string('rider_code');
             $table->string('order_status');
+            $table->string('cancel_description')->nullable();
 
             //$table->integer('product_details')->nullable();
             $table->timestamps();

@@ -19,7 +19,7 @@ class CreateRiderDeliveryStatusModelsTable extends Migration
             $table->string('email');
             $table->string('order_id');
             $table->enum('order_status',
-                array('arrived','dispatched','arrived_customer_doorstep','delivered','cancelled','cancelled_by_customer','returned_to_seller'));
+                array('allocated','arrived','dispatched','arrived_customer_doorstep','delivered','cancelled','cancelled_by_customer','returned_to_seller'));
             $table->string('latitude');
             $table->string('longitude');
             $table->timestamps();
