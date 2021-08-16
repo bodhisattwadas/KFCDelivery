@@ -77,7 +77,7 @@ class OrderController extends Controller
                 $order->save();
 
                 (new RiderLogController())->_setSpecificLog($riderDetails['id'],'delivery');
-                $this->_sendFCM(str_replace("@", "", $riderDetails['email']));
+                $this->_sendFCM(str_replace("@", "", $riderDetails['email']),"New Order","A new order has been arrived.");
 
                 return response()->json([
                     "message" => 'success',
@@ -277,7 +277,7 @@ class OrderController extends Controller
         
     }
 
-    public function _sendFCM($email){
+    public function _sendFCM($email,$header,$body){
         $url = 'https://fcm.googleapis.com/fcm/send';
         $apiKey = env('FIREBASE_KEY');
         $headers = array(
@@ -285,8 +285,8 @@ class OrderController extends Controller
             'Content-Type:application/json'
         );
         $notify = [
-            'title' => "New Order",
-            'body' => "A new order has arrived",
+            'title' => $header,
+            'body' => $body,
         ];
         $apiBody = [
             'notification' => $notify,
@@ -331,6 +331,7 @@ class OrderController extends Controller
                     'longitude' => '0.00',
                 ]);
             $rsModel->save();
+            $this->_sendFCM(str_replace("@", "", User::find($order->rider_code)->email),"Order Cancelled","This order is cancelled");
             //['email','order_id','order_status','latitude','longitude'];
             return response()->json([
                 "status" => 'success',
@@ -366,7 +367,7 @@ class OrderController extends Controller
                     'longitude' => '0.00',
                 ]);
             $rsModel->save();
-
+            $this->_sendFCM(str_replace("@", "", User::find($order->rider_code)->email),"Order Cancelled","This order is cancelled");
             return response()->json([
                 "status" => 'success',
                 "message" => 'order cancelled successfully',
