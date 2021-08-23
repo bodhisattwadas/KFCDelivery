@@ -24,7 +24,7 @@ class OrderController extends Controller
             'picup_contact_number' => 'required|numeric|digits:10',
             'store_code' => 'required|exists:store_models',
             'scheduled_time'=> 'required',
-            'client_order_id'=> 'required',
+            'client_order_id'=> 'required|unique:order_models',
             
             'name' =>'required',
             'contact_number'=>'required|numeric|digits:10',
