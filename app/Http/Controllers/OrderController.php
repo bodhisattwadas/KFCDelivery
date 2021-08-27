@@ -33,7 +33,8 @@ class OrderController extends Controller
             'city'=>'required',
             'latitude'=>'required',
             'longitude'=>'required',
-            'pin'=>'required|numeric|digits:6',
+            'pin'=>'numeric|digits:6',
+            //'pin'=>'required|numeric|digits:6',
             'paid' => [
                 'required',
                 Rule::in(['true','false']),

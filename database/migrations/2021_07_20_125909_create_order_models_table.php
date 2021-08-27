@@ -39,7 +39,7 @@ class CreateOrderModelsTable extends Migration
             $table->string('city');
             $table->string('latitude');
             $table->string('longitude');
-            $table->string('pin');
+            $table->string('pin')->nullable();
             
 
             //MiscDetails
