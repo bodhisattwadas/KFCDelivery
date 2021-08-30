@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
          //ProductModel::factory(10)->create();
          //StoreModel::factory(10)->create();
          // User::factory(10)->create();
-        User::factory(10)->create()->each(function(User $u) {
+        User::factory(env('SEEDER', 10))->create()->each(function(User $u) {
            StoreRiderModel::factory(1)->create(['rider_code' => $u->id]);
            RiderLog::factory(1)->create(['rider_code' => $u->id]);
         });
