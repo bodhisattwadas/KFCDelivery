@@ -277,7 +277,6 @@ class OrderController extends Controller
         }
         
     }
-
     public function _sendFCM($email,$header,$body){
         $url = 'https://fcm.googleapis.com/fcm/send';
         $apiKey = env('FIREBASE_KEY');
@@ -304,7 +303,6 @@ class OrderController extends Controller
         curl_close($ch);
         //return $result;
     }
-
     public function _cancelOrder(Request $request){
         $validator = Validator::make($request->all(), [
             'api_token'=>[
@@ -340,7 +338,6 @@ class OrderController extends Controller
             ]);
         }
     }
-
     public function _cancelOrderByCustomer(Request $request){
         $validator = Validator::make($request->all(), [
             'api_token'=>[

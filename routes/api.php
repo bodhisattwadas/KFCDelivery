@@ -30,6 +30,7 @@ Route::post('/create.user','AjaxController@_createUser')->name('create.user');
 Route::post('/get.verified.status','AjaxController@_getVerifiedStatus')->name('get.verified.status');
 Route::post('/update.profile','AjaxController@_updateProfile')->name('update.profile');
 Route::post('/profile.update.status','AjaxController@_checkProfileUpdateStatus')->name('profile.update.status');
+
 Route::post('/update.delivery.status','RiderDeliveryStatusController@_setStatus')
                             ->name('update.delivery.status');
 Route::post('/update.movement.status','RiderDeliveryStatusController@_setMovementStatus')
