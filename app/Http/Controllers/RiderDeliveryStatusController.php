@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Carbon\Carbon;
 use App\Http\Controllers\RiderLogController;
+use Haversini\Haversini;
 use Log;
 
 class RiderDeliveryStatusController extends Controller
@@ -110,7 +111,7 @@ class RiderDeliveryStatusController extends Controller
             ]);
         }else{
             $order = OrderModel::where("rider_code",User::where('email',$request->get('email'))->get()->first()->id)
-                    ->whereIn('order_status',['allocated','arrived','dispatched','arrived_customer_doorstep','delivered','returned_to_seller','cancelled','cancelled_by_customer'])
+                    ->whereIn('order_status',['allocated','arrived','dispatched','arrived_customer_doorstep','delivered','cancelled','cancelled_by_customer'])
                     ->get()->first();
             if(!$order){
                 return response()->json([
@@ -153,7 +154,6 @@ class RiderDeliveryStatusController extends Controller
                 Rule::in([env('API_KEY')]),
             ],
             'email' => 'required|email|exists:users',
-            //'order_id' => 'required',
             'latitude' => 'required|between:-90,90',
             'longitude' => 'required|between:-90,90',
         ]);
@@ -181,6 +181,7 @@ class RiderDeliveryStatusController extends Controller
                         'longitude' => $request->get('longitude'),
                     ]);
                     $rsModel->save();
+                     $this->_pushDeliveryLocationData($order,$request->get('latitude'),$request->get('longitude'));
                     return response()->json([
                         "status" => 'success',
                         "message" => 'updated',
@@ -190,7 +191,15 @@ class RiderDeliveryStatusController extends Controller
     }
 
     public function _pushDeliveryStatusData($order,$latitude,$longitude){
-           if($order->order_status == 'allocated') $order_status = 'allotted';
+            $distance = floor(Haversini::calculate(
+                $latitude,
+                $longitude,
+                $order->latitude,
+                $order->longitude
+            ));
+            Log::debug("Distance: ".$distance);
+            Log::debug("Time: ".$distance*6);
+            if($order->order_status == 'allocated') $order_status = 'allotted';
             $postData = array(
                 // "allot_time" => '2017-11-30T09:25:17.000000Z',
                 "allot_time" => $order->created_at->format('c'),
@@ -201,21 +210,63 @@ class RiderDeliveryStatusController extends Controller
                 "rider_contact" => User::find($order->rider_code)->phone_number1,
                 "rider_latitude" => $latitude,
                 "rider_longitude" => $longitude,
-                "pickup_eta" => 5,
-                "drop_eta" => 20
+                "pickup_eta" => ($order->order_status == 'allocated')?rand(1,7):0,
+                "drop_eta" => $distance*6+rand(0,8)
             );
             Log::debug($postData);
-            $ch = curl_init('https://kfc-india-215519.appspot.com/_ah/api/externalApi/v1/tygor/task/update');
+            $ch = curl_init(env('PRODUCTION_URL').'/_ah/api/externalApi/v1/tygor/task/update');
             curl_setopt_array($ch, array(
                 CURLOPT_POST => TRUE,
                 CURLOPT_RETURNTRANSFER => TRUE,
                 CURLOPT_HTTPHEADER => array(
-                    'client_id: 4914177575485440',
+                    'client_id: '.env('PRODUCTION_CLIENT_ID'),
                     'Content-Type: application/json',
-                    'referer: https://kfc-india-215519.appspot.com'
+                    'referer: '.env('PRODUCTION_REFERRER')
                 ),
                 CURLOPT_POSTFIELDS => json_encode($postData)
             ));
+
+            // Send the request
+            $response = curl_exec($ch);
+
+            // Check for errors
+            if($response === FALSE){
+                die(curl_error($ch));
+            }
+
+            // Decode the response
+            $responseData = json_decode($response, TRUE);
+
+            // Close the cURL handler
+            curl_close($ch);
+
+            // Print the date from the response
+            //echo $responseData['published'];
+            Log::debug($responseData);
+    }
+
+    public function _pushDeliveryLocationData($order,$latitude,$longitude){
+           
+            $postData = array(
+                 "order_id" => $order->id,
+                 "rider_name" => User::find($order->rider_code)->name,
+                 "rider_longitude" => $longitude , 
+                 "time" => "1000",
+                 "rider_latitude" => $latitude,
+                 "location_accuracy" => "100"
+            );
+            Log::debug($postData);
+            $ch = curl_init(env('PRODUCTION_URL').'/_ah/api/externalApi/v1/update/location/riderLocation');
+            curl_setopt_array($ch, array(
+                CURLOPT_POST => TRUE,
+                CURLOPT_RETURNTRANSFER => TRUE,
+                CURLOPT_HTTPHEADER => array(
+                    'client_id: '.env('PRODUCTION_CLIENT_ID'),
+                    'Content-Type: application/json'
+                ),
+                CURLOPT_POSTFIELDS => json_encode($postData)
+            ));
+
             // Send the request
             $response = curl_exec($ch);
 

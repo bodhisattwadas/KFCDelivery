@@ -11,6 +11,7 @@ use App\Models\RiderDeliveryStatusModel;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\RiderLogController;
 use Illuminate\Validation\Rule;
+
 use Log;
 
 class OrderController extends Controller
@@ -126,7 +127,6 @@ class OrderController extends Controller
                             "phone"=>null,
                         ],
                         "slingo_order_id"=>null,
-                        //"track_url"=> "sss",
                     ],
                 ]);
             }

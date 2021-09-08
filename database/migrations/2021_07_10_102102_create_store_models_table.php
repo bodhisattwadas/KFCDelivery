@@ -18,6 +18,8 @@ class CreateStoreModelsTable extends Migration
             $table->string('store_code');
             $table->string('store_name');
             $table->string('store_location')->nullable();
+            $table->string('store_lat')->nullable();
+            $table->string('store_long')->nullable();
             $table->timestamps();
         });
         DB::table('store_models')->insert(

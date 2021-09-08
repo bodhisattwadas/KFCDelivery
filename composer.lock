@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ed046688f0df91497aeecda69cb61319",
+    "content-hash": "7cfde28b04e0f12d7421ea1a8ebe51f8",
     "packages": [
         {
             "name": "almasaeed2010/adminlte",
@@ -962,6 +962,57 @@
                 "source": "https://github.com/jeroennoten/Laravel-AdminLTE/tree/v3.6.1"
             },
             "time": "2021-06-08T06:26:03+00:00"
+        },
+        {
+            "name": "jordanbrauer/unit-converter",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jordanbrauer/unit-converter.git",
+                "reference": "f3b93842c9252faebb3d3cb7780118786e676add"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jordanbrauer/unit-converter/zipball/f3b93842c9252faebb3d3cb7780118786e676add",
+                "reference": "f3b93842c9252faebb3d3cb7780118786e676add",
+                "shasum": ""
+            },
+            "require": {
+                "ext-bcmath": "*",
+                "ext-intl": "*",
+                "php": "^7.1 || ^8.0"
+            },
+            "require-dev": {
+                "ergebnis/composer-normalize": "^2.13",
+                "marcocesarato/php-conventional-changelog": "^1.9",
+                "nunomaduro/phpinsights": "^1.14",
+                "pestphp/pest": "^1.0",
+                "phpunit/phpunit": "^9.5",
+                "symfony/var-dumper": "^3.3"
+            },
+            "default-branch": true,
+            "type": "component",
+            "autoload": {
+                "psr-4": {
+                    "UnitConverter\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "jordanbrauer",
+                    "email": "18744334+jordanbrauer@users.noreply.github.com"
+                }
+            ],
+            "description": "Convert standard units from one to another with this easy to use, lightweight package",
+            "support": {
+                "issues": "https://github.com/jordanbrauer/unit-converter/issues",
+                "source": "https://github.com/jordanbrauer/unit-converter/tree/master"
+            },
+            "time": "2021-04-30T02:51:30+00:00"
         },
         {
             "name": "laravel/framework",
@@ -2392,6 +2443,57 @@
                 "source": "https://github.com/bobthecow/psysh/tree/v0.10.8"
             },
             "time": "2021-04-10T16:23:39+00:00"
+        },
+        {
+            "name": "rafaelfragoso/haversini-formula",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/orafaelfragoso/php-haversine-formula.git",
+                "reference": "122ef2efdad2cab49aa066b4b00d4d0994924db6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/orafaelfragoso/php-haversine-formula/zipball/122ef2efdad2cab49aa066b4b00d4d0994924db6",
+                "reference": "122ef2efdad2cab49aa066b4b00d4d0994924db6",
+                "shasum": ""
+            },
+            "require": {
+                "jordanbrauer/unit-converter": "dev-master",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "phpunit/php-code-coverage": "^6.1",
+                "phpunit/phpunit": "~7.0",
+                "symfony/var-dumper": "^4.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Haversini\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rafael Fragoso",
+                    "email": "rafaelfragosom@gmail.com"
+                },
+                {
+                    "name": "Leonardo do Carmo",
+                    "email": "leonardo.docarmo@hotmail.com"
+                }
+            ],
+            "description": "This PHP class can replace the Google Distance Matrix to calculate the distance between two points using latitude and longitude. It will prevent you to do massive requests to Google servers and enhance your service performance.",
+            "homepage": "https://github.com/rafaelfragosom/php-haversine-formula",
+            "support": {
+                "issues": "https://github.com/orafaelfragoso/php-haversine-formula/issues",
+                "source": "https://github.com/orafaelfragoso/php-haversine-formula/tree/2.0.0"
+            },
+            "time": "2019-10-06T19:34:51+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
