@@ -119,25 +119,32 @@ class RiderDeliveryStatusController extends Controller
                     "message" => 'some error occurred',
                 ]);
             }else{
-                $rsModel = new RiderDeliveryStatusModel([
-                    'email' => $request->get('email'),
-                    'order_id' => $order->id,
-                    'order_status'=>$request->get('order_status'),
-                    'latitude' => $request->get('latitude'),
-                    'longitude' => $request->get('longitude'),
-                ]);
-                $rsModel->save();
-                // [CANCELLED, RETURNED_TO_SELLER, DELIVERED, ACCEPTED, CANCELLED_BY_CUSTOMER, ARRIVED_CUSTOMER_DOORSTEP, ARRIVED, DISPATCHED, ALLOTTED]
-                
+                if(RiderDeliveryStatusModel::where([
+                    ['order_id',$order->id],
+                    ['order_status',$request->get('order_status')]
+                ])->get()->count() == 0){
 
-                if($request->get('order_status') == 'returned_to_seller'){
-                    (new RiderLogController())->_setSpecificLog($order->rider_code,'in');
-                    RiderMovementStatusModel::where('order_id',$order->id)->delete();
-                }
-                $order->order_status = $request->get('order_status');
-                $order->save();
-                /** Update to server */
-                $this->_pushDeliveryStatusData($order,$request->get('latitude'),$request->get('longitude'));
+                      $rsModel = new RiderDeliveryStatusModel([
+                        'email' => $request->get('email'),
+                        'order_id' => $order->id,
+                        'order_status'=>$request->get('order_status'),
+                        'latitude' => $request->get('latitude'),
+                        'longitude' => $request->get('longitude'),
+                    ]);
+                    $rsModel->save();
+                    // [CANCELLED, RETURNED_TO_SELLER, DELIVERED, ACCEPTED, CANCELLED_BY_CUSTOMER, ARRIVED_CUSTOMER_DOORSTEP, ARRIVED, DISPATCHED, ALLOTTED]
+                    
+
+                    if($request->get('order_status') == 'returned_to_seller'){
+                        (new RiderLogController())->_setSpecificLog($order->rider_code,'in');
+                        RiderMovementStatusModel::where('order_id',$order->id)->delete();
+                    }
+                    $order->order_status = $request->get('order_status');
+                    $order->save();
+                    /** Update to server */
+                    $this->_pushDeliveryStatusData($order,$request->get('latitude'),$request->get('longitude'));  
+                    }
+                
 
                 return response()->json([
                     "status" => 'success',
