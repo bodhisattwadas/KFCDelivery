@@ -21,8 +21,11 @@ class StoreRiderModelFactory extends Factory
      */
     public function definition()
     {
+        //332
+        $status = ['345','332'];
+        shuffle($status);
         return [
-            'store_code'=>'345',
+            'store_code'=>$status[0],
         ];
     }
 }
