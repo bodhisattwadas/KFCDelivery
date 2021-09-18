@@ -17,6 +17,7 @@ use Log;
 class OrderController extends Controller
 {
     public function _createOrder(Request $request){
+        Log::debug("Create order initiated..");
         $validator = Validator::make($request->all(), [
             'api_token'=>[
                 'required',
