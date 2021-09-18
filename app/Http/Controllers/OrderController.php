@@ -118,6 +118,7 @@ class OrderController extends Controller
                     ],
                 ]);
             }else{
+                Log::debug("Rejected due to unavailble rider. ");
                 return response()->json([
                     "message" => 'fail',
                     "data" => [
