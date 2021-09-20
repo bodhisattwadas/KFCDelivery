@@ -289,6 +289,11 @@ class OrderController extends Controller
         $notify = [
             'title' => $header,
             'body' => $body,
+            "sound" => "sound.mp3",
+            "sticky" => false,
+            "default_vibrate_timings" => true,
+            "vibrate_timings" => ["1s", "2s", "4s", "8s"],
+            "priority" => "PRIORITY_MAX"
         ];
         $apiBody = [
             'notification' => $notify,
