@@ -340,8 +340,8 @@ class OrderController extends Controller
             ]);
         }else{
             $order = OrderModel::find($request->get('order_id'));
-            $order->order_status = 'cancelled';
-            $order->cancel_description = $request->get('cancel_description');
+            $order->order_status = 'returned_to_seller';
+            $order->cancel_description = 'cancelled';
             $order->save();
 
             if(RiderDeliveryStatusModel::where([
@@ -383,8 +383,8 @@ class OrderController extends Controller
             ]);
         }else{
             $order = OrderModel::find($request->get('order_id'));
-            $order->order_status = 'cancelled';
-            $order->cancel_description = $request->get('cancel_description');
+            $order->order_status = 'returned_to_seller';
+            $order->cancel_description = 'cancelled;
             $order->save();
 
             $rsModel = new RiderDeliveryStatusModel([
