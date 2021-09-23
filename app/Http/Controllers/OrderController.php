@@ -341,7 +341,8 @@ class OrderController extends Controller
         }else{
             $order = OrderModel::find($request->get('order_id'));
             $order->order_status = 'cancelled';
-            $order->cancel_description = $request->get('cancel_description');
+            $order->cancel_description = 'cancel';
+            //$order->cancel_description = $request->get('cancel_description');
             $order->save();
 
             if(RiderDeliveryStatusModel::where([
