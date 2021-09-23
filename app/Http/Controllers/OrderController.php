@@ -153,7 +153,7 @@ class OrderController extends Controller
 
             $order = OrderModel::where("rider_code",User::where('email',$request->get('email'))->get()->first()->id)
             ->whereIn('order_status',['allocated','arrived','dispatched','arrived_customer_doorstep','delivered','cancelled','cancelled_by_customer'])
-            ->get()
+            ->latest()
             ->first();
             if(!$order){
                 return response()->json([
