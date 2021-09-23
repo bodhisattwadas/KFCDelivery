@@ -384,7 +384,7 @@ class OrderController extends Controller
         }else{
             $order = OrderModel::find($request->get('order_id'));
             $order->order_status = 'returned_to_seller';
-            $order->cancel_description = 'cancelled;
+            $order->cancel_description = 'cancelled';
             $order->save();
 
             $rsModel = new RiderDeliveryStatusModel([
