@@ -295,8 +295,22 @@ class OrderController extends Controller
             "vibrate_timings" => ["1s", "2s", "4s", "8s"],
             "priority" => "PRIORITY_MAX"
         ];
+        // $apiBody = [
+        //     'notification' => $notify,
+        //     'to' => '/topics/' . $email
+        // ];
         $apiBody = [
             'notification' => $notify,
+            "data" => [
+                "title" => "New Order",
+                "body" => "A new order has been arrived please open the app to pick"
+            ],
+            "android" => [
+                "priority" => "high",
+                "ttl" => "1000s", // time in second
+
+            ],
+            "time_to_live" => 700, // time in second 
             'to' => '/topics/' . $email
         ];
         $ch = curl_init();
@@ -329,14 +343,21 @@ class OrderController extends Controller
             $order->cancel_description = $request->get('cancel_description');
             $order->save();
 
-            $rsModel = new RiderDeliveryStatusModel([
+            if(RiderDeliveryStatusModel::where([
+                                ["order_id",$order->id],
+                                ["order_status",'cancelled'],
+                            ])->get()->count() == 0){
+                $rsModel = new RiderDeliveryStatusModel([
                     'email' => User::find($order->rider_code)->email,
                     'order_id' => $order->id,
                     'order_status'=>'cancelled',
                     'latitude' => '0.00',
                     'longitude' => '0.00',
                 ]);
-            $rsModel->save();
+                $rsModel->save();
+            }
+            
+
             $this->_sendFCM(str_replace("@", "", User::find($order->rider_code)->email),"Order Cancelled","This order is cancelled");
             //['email','order_id','order_status','latitude','longitude'];
             return response()->json([
