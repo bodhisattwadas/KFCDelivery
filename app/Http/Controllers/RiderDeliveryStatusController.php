@@ -138,6 +138,7 @@ class RiderDeliveryStatusController extends Controller
                     if($request->get('order_status') == 'returned_to_seller'){
                         (new RiderLogController())->_setSpecificLog($order->rider_code,'in');
                         RiderMovementStatusModel::where('order_id',$order->id)->delete();
+                        $order->order_status = 'returned_to_seller';
                     }
                     $order->order_status = $request->get('order_status');
                     $order->save();
