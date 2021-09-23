@@ -153,7 +153,7 @@ class OrderController extends Controller
 
             $order = OrderModel::where("rider_code",User::where('email',$request->get('email'))->get()->first()->id)
             ->whereIn('order_status',['allocated','arrived','dispatched','arrived_customer_doorstep','delivered','cancelled','cancelled_by_customer'])
-            ->get()
+            ->latest()
             ->first();
             if(!$order){
                 return response()->json([
@@ -340,8 +340,8 @@ class OrderController extends Controller
             ]);
         }else{
             $order = OrderModel::find($request->get('order_id'));
-            $order->order_status = 'returned_to_seller';
-            $order->cancel_description = 'cancelled';
+            $order->order_status = 'cancelled';
+            $order->cancel_description = $request->get('cancel_description');
             $order->save();
 
             if(RiderDeliveryStatusModel::where([
@@ -383,8 +383,8 @@ class OrderController extends Controller
             ]);
         }else{
             $order = OrderModel::find($request->get('order_id'));
-            $order->order_status = 'returned_to_seller';
-            $order->cancel_description = 'cancelled';
+            $order->order_status = 'cancelled';
+            $order->cancel_description = $request->get('cancel_description');
             $order->save();
 
             $rsModel = new RiderDeliveryStatusModel([
